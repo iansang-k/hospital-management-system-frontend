@@ -1,99 +1,41 @@
-import { useEffect, useState } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import "./App.css";
+// App.jsx
+import { Routes, Route, Link } from "react-router-dom";
+import Patients from "./pages/Patients";
+import Doctors from "./pages/Doctors";
+import Appointments from "./pages/Appointments";
+import Prescriptions from "./pages/Prescriptions";
 
-// Layout Component
-const Layout = ({ children }) => {
-  const navigate = useNavigate();
-  
+function App() {
   return (
-    <div className="app">
-      <nav className="sidebar">
-        <div className="logo-container">
-          <img 
-            src="/vite.svg" 
-            className="logo" 
-            alt="Vite logo" 
-            onClick={() => navigate('/')}
-            style={{ cursor: 'pointer' }}
-          />
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-blue-600 text-white p-4 flex justify-between">
+        <h1 className="font-bold text-xl">Hospital Management</h1>
+        <div className="space-x-4">
+          <Link to="/" className="hover:underline">
+            Patients
+          </Link>
+          <Link to="/doctors" className="hover:underline">
+            Doctors
+          </Link>
+          <Link to="/appointments" className="hover:underline">
+            Appointments
+          </Link>
+          <Link to="/prescriptions" className="hover:underline">
+            Prescriptions
+          </Link>
         </div>
-        <ul className="nav-links">
-          <li>
-            <Link to="/">Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/patients">Patients</Link>
-          </li>
-        </ul>
       </nav>
-      <main className="content">
-        {children}
+
+      <main className="p-6">
+        <Routes>
+          <Route path="/" element={<Patients />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/prescriptions" element={<Prescriptions />} />
+        </Routes>
       </main>
     </div>
   );
-};
-
-function App() {
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Client-side data fetching
-    const fetchData = async () => {
-      try {
-        // In a real app: fetch('/api/patients')
-        const mockPatients = [
-          { id: 1, name: "John Doe", age: 35, gender: "Male" },
-          { id: 2, name: "Jane Smith", age: 28, gender: "Female" },
-        ];
-        setPatients(mockPatients);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Dashboard />} />
-        <Route
-          path="patients"
-          element={
-            loading ? <p>Loading...</p> : <PatientList patients={patients} />
-          }
-        />
-      </Route>
-    </Routes>
-  );
 }
-
-// Dashboard Component (in same file or separate)
-const Dashboard = () => (
-  <div>
-    <h1>Hospital Dashboard</h1>
-    <p>Welcome to the management system</p>
-  </div>
-);
-
-// PatientList Component
-const PatientList = ({ patients }) => (
-  <div>
-    <h2>Patients</h2>
-    <div className="patient-grid">
-      {patients.map((patient) => (
-        <div key={patient.id} className="patient-card">
-          <h3>{patient.name}</h3>
-          <p>Age: {patient.age}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default App;
