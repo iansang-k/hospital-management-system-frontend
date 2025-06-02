@@ -1,174 +1,167 @@
-import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+const validationSchema = z.object({
+  name: z.string().nonempty("Required"),
+  gender: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  phone_number: z
+    .string()
+    .regex(/^\d{10}$/, "Must be 10 digits")
+    .optional(),
+  emergency_contact: z.string().optional(),
+  emergency_phone_number: z.string().optional(),
+  bloodtype: z.string().optional(),
+});
+
 export default function AddPatient() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: "",
-    gender: "",
-    date_of_birth: "",
-    phone_number: "",
-    emergency_contact: "",
-    emergency_phone_number: "",
-    blood_type: "", // Changed from bloodtype to match common naming conventions
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(validationSchema),
+    defaultValues: {
+      name: "",
+      gender: "",
+      date_of_birth: "",
+      phone_number: "",
+      emergency_contact: "",
+      emergency_phone_number: "",
+      bloodtype: "",
+    },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const onSubmit = async (values) => {
     try {
-      // Basic validation
-      if (!form.name.trim()) {
-        throw new Error("Patient name is required");
-      }
-
-      const response = await fetch("http://localhost:8000/patients", {
+      const res = await fetch("http://localhost:8000/patients", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...form,
-          date_of_birth: form.date_of_birth || null,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to add patient");
-      }
-
-      toast.success("Patient added successfully!");
+      if (!res.ok) throw new Error(await res.text());
+      toast.success("Patient added!");
+      reset();
       navigate("/patients");
     } catch (error) {
-      console.error("Error adding patient:", error);
-      toast.error(error.message || "Failed to add patient");
-    } finally {
-      setIsSubmitting(false);
+      toast.error(error.message);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Patient</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8 border border-teal-100">
+      <h2 className="text-xl font-semibold mb-4 text-teal-800">Add Patient</h2>
+      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        {/* Name (required) */}
         <div>
-          <label className="block text-gray-700 mb-1">Full Name*</label>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Full Name <span className="text-red-500">*</span>
+          </label>
           <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
+            type="text"
+            {...register("name")}
+            className={`w-full p-2.5 rounded-lg border ${
+              errors.name ? "border-red-400" : "border-teal-200"
+            } focus:ring-2 focus:ring-teal-300 focus:border-teal-400`}
+          />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+          )}
+        </div>
+
+        {/* Gender */}
+        <div>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Gender
+          </label>
+          <input
+            type="text"
+            {...register("gender")}
+            className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+            placeholder="Male/Female/Other"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700 mb-1">Gender</label>
-            <select
-              name="gender"
-              value={form.gender}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            >
-              <option value="">Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 mb-1">Date of Birth</label>
-            <input
-              type="date"
-              name="date_of_birth"
-              value={form.date_of_birth}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              max={new Date().toISOString().split("T")[0]}
-            />
-          </div>
+        {/* Date of Birth */}
+        <div>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            max={new Date().toISOString().split("T")[0]}
+            {...register("date_of_birth")}
+            className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+          />
         </div>
 
+        {/* Phone Number */}
         <div>
-          <label className="block text-gray-700 mb-1">Phone Number</label>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Phone Number
+          </label>
           <input
             type="tel"
-            name="phone_number"
-            value={form.phone_number}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-            pattern="[0-9]{10}"
-            title="10 digit phone number"
+            {...register("phone_number")}
+            className={`w-full p-2.5 rounded-lg border ${
+              errors.phone_number ? "border-red-400" : "border-teal-200"
+            } focus:ring-2 focus:ring-teal-300 focus:border-teal-400`}
+            placeholder="10-digit number"
+          />
+          {errors.phone_number && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.phone_number.message}
+            </p>
+          )}
+        </div>
+
+        {/* Emergency Contact */}
+        <div>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Emergency Contact
+          </label>
+          <input
+            type="text"
+            {...register("emergency_contact")}
+            className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700 mb-1">
-              Emergency Contact
-            </label>
-            <input
-              name="emergency_contact"
-              value={form.emergency_contact}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 mb-1">Emergency Phone</label>
-            <input
-              type="tel"
-              name="emergency_phone_number"
-              value={form.emergency_phone_number}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              pattern="[0-9]{10}"
-            />
-          </div>
+        {/* Emergency Phone */}
+        <div>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Emergency Phone
+          </label>
+          <input
+            type="tel"
+            {...register("emergency_phone_number")}
+            className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+          />
         </div>
 
+        {/* Blood Type */}
         <div>
-          <label className="block text-gray-700 mb-1">Blood Type</label>
-          <select
-            name="blood_type"
-            value={form.blood_type}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          >
-            <option value="">Select</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-          </select>
+          <label className="block text-sm font-medium text-teal-700 mb-1">
+            Blood Type
+          </label>
+          <input
+            type="text"
+            {...register("bloodtype")}
+            className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+            placeholder="A+, B-, O+, etc."
+          />
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded text-white font-medium ${
-            isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+          className={`w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium ${
+            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >
           {isSubmitting ? "Adding..." : "Add Patient"}

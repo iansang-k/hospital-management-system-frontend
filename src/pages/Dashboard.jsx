@@ -2,47 +2,54 @@ import { Link } from "react-router-dom";
 
 function Dashboard() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Hospital Management Dashboard</h1>
-      <div className="grid grid-cols-2 gap-4">
+    <div className="p-6 bg-teal-50 min-h-screen">
+      <h1 className="text-2xl font-bold mb-8 text-teal-800">
+        Hospital Dashboard
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Link
           to="/add-patient"
-          className="bg-indigo-500 text-white rounded-xl p-6 shadow hover:bg-indigo-600"
+          className="bg-teal-500 text-white rounded-lg p-5 shadow-md hover:shadow-lg transition-all hover:bg-teal-600"
         >
-          <h2 className="text-xl font-semibold">Add Patient</h2>
-          <p>Register a new patient</p>
+          <h2 className="font-semibold text-lg">Add Patient</h2>
+          <p className="text-teal-100 text-sm mt-1">Register new patient</p>
         </Link>
 
         <Link
           to="/patients"
-          className="bg-blue-500 text-white rounded-xl p-6 shadow hover:bg-blue-600"
+          className="bg-teal-500 text-white rounded-lg p-5 shadow-md hover:shadow-lg transition-all hover:bg-teal-600"
         >
-          <h2 className="text-xl font-semibold">Patients</h2>
-          <p>Manage patient records</p>
+          <h2 className="font-semibold text-lg">Patients</h2>
+          <p className="text-teal-100 text-sm mt-1">Manage records</p>
         </Link>
+
         <Link
           to="/doctors"
-          className="bg-green-500 text-white rounded-xl p-6 shadow hover:bg-green-600"
+          className="bg-teal-500 text-white rounded-lg p-5 shadow-md hover:shadow-lg transition-all hover:bg-teal-600"
         >
-          <h2 className="text-xl font-semibold">Doctors</h2>
-          <p>Manage doctor profiles</p>
+          <h2 className="font-semibold text-lg">Doctors</h2>
+          <p className="text-teal-100 text-sm mt-1">Manage profiles</p>
         </Link>
+
         <Link
           to="/appointments"
-          className="bg-yellow-500 text-white rounded-xl p-6 shadow hover:bg-yellow-600"
+          className="bg-teal-500 text-white rounded-lg p-5 shadow-md hover:shadow-lg transition-all hover:bg-teal-600"
         >
-          <h2 className="text-xl font-semibold">Appointments</h2>
-          <p>View and schedule appointments</p>
+          <h2 className="font-semibold text-lg">Appointments</h2>
+          <p className="text-teal-100 text-sm mt-1">View schedule</p>
         </Link>
+
         <Link
           to="/prescriptions"
-          className="bg-purple-500 text-white rounded-xl p-6 shadow hover:bg-purple-600"
+          className="bg-teal-500 text-white rounded-lg p-5 shadow-md hover:shadow-lg transition-all hover:bg-teal-600"
         >
-          <h2 className="text-xl font-semibold">Prescriptions</h2>
-          <p>View and manage prescriptions</p>
+          <h2 className="font-semibold text-lg">Prescriptions</h2>
+          <p className="text-teal-100 text-sm mt-1">Manage medications</p>
         </Link>
       </div>
     </div>
   );
 }
+
 export default Dashboard;

@@ -2,40 +2,65 @@ import { useEffect, useState } from "react";
 
 function Prescriptions() {
   const [prescriptions, setPrescriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/prescriptions")
-      .then((res) => res.json())
-      .then((data) => setPrescriptions(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch prescriptions");
+        return res.json();
+      })
+      .then((data) => {
+        setPrescriptions(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
 
+  if (loading)
+    return <div className="p-6 text-teal-800">Loading prescriptions...</div>;
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
+
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Prescriptions</h2>
+    <div className="min-h-screen bg-teal-50 py-10 px-6">
+      <h2 className="text-3xl font-semibold text-teal-900 mb-8 text-center">
+        Prescriptions
+      </h2>
       {prescriptions.length === 0 ? (
-        <p>No prescriptions found.</p>
+        <p className="text-center text-gray-600">No prescriptions found.</p>
       ) : (
-        <ul className="space-y-2">
+        <div className="grid gap-6 max-w-4xl mx-auto">
           {prescriptions.map((rx) => (
-            <li key={rx.id} className="p-4 border rounded shadow-sm">
-              <p>
-                <strong>Medication:</strong> {rx.medication}
-              </p>
-              <p>
-                <strong>Dosage:</strong> {rx.dosage}
-              </p>
-              <p>
-                <strong>Date Prescribed:</strong> {rx.date_prescribed}
-              </p>
-              <p>
-                <strong>Doctor ID:</strong> {rx.doctor_id}
-              </p>
-              <p>
-                <strong>Patient ID:</strong> {rx.patient_id}
-              </p>
-            </li>
+            <div
+              key={rx.id}
+              className="bg-white border border-teal-100 rounded-xl p-6 shadow-sm hover:shadow-md transition"
+            >
+              <h3 className="text-xl font-semibold text-teal-800 mb-2">
+                {rx.medication}
+              </h3>
+              <div className="text-gray-700 space-y-1 text-sm">
+                <p>
+                  <span className="font-medium">Dosage:</span> {rx.dosage}
+                </p>
+                <p>
+                  <span className="font-medium">Date Prescribed:</span>{" "}
+                  {rx.date_prescribed}
+                </p>
+                <p>
+                  <span className="font-medium">Doctor ID:</span> {rx.doctor_id}
+                </p>
+                <p>
+                  <span className="font-medium">Patient ID:</span>{" "}
+                  {rx.patient_id}
+                </p>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
