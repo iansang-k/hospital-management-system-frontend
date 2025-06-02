@@ -65,7 +65,10 @@ function BookAppointment() {
       <h2 className="text-xl font-semibold mb-6 text-teal-800">
         Book Appointment
       </h2>
-
+      <div className="text-sm font-light text-teal-600 font-style: italic font-sans">
+        <p>You can only book an appointment once the patient has been added</p>
+      </div>
+      <br />
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
