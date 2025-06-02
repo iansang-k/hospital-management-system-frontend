@@ -2,24 +2,56 @@ import { useEffect, useState } from "react";
 
 function Prescriptions() {
   const [prescriptions, setPrescriptions] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/prescriptions")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch prescriptions");
-        return res.json();
-      })
-      .then((data) => {
-        setPrescriptions(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchData = async () => {
+      try {
+        //fetching all data
+        const [prescriptionsRes, doctorsRes, patientsRes] = await Promise.all([
+          fetch("http://localhost:8000/prescriptions"),
+          fetch("http://localhost:8000/doctors"),
+          fetch("http://localhost:8000/patients"),
+        ]);
+
+        if (!prescriptionsRes.ok || !doctorsRes.ok || !patientsRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const [prescriptionsData, doctorsData, patientsData] =
+          await Promise.all([
+            prescriptionsRes.json(),
+            doctorsRes.json(),
+            patientsRes.json(),
+          ]);
+
+        setPrescriptions(prescriptionsData);
+        setDoctors(doctorsData);
+        setPatients(patientsData);
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
+
+  //getting doctor name by ID
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((d) => d.id === doctorId);
+    return doctor ? `Dr. ${doctor.name}` : "Unknown Doctor";
+  };
+
+  //getting patient name by ID
+  const getPatientName = (patientId) => {
+    const patient = patients.find((p) => p.id === patientId);
+    return patient ? patient.name : "Unknown Patient";
+  };
 
   if (loading)
     return <div className="p-6 text-teal-800">Loading prescriptions...</div>;
@@ -48,14 +80,15 @@ function Prescriptions() {
                 </p>
                 <p>
                   <span className="font-medium">Date Prescribed:</span>{" "}
-                  {rx.date_prescribed}
+                  {new Date(rx.date_prescribed).toLocaleDateString()}
                 </p>
                 <p>
-                  <span className="font-medium">Doctor ID:</span> {rx.doctor_id}
+                  <span className="font-medium">Doctor:</span>{" "}
+                  {getDoctorName(rx.doctor_id)}
                 </p>
                 <p>
-                  <span className="font-medium">Patient ID:</span>{" "}
-                  {rx.patient_id}
+                  <span className="font-medium">Patient:</span>{" "}
+                  {getPatientName(rx.patient_id)}
                 </p>
               </div>
             </div>

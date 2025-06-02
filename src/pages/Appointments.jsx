@@ -2,17 +2,47 @@ import { useEffect, useState } from "react";
 
 function Appointments() {
   const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/appointments")
-      .then((res) => res.json())
-      .then((data) => {
-        setAppointments(data);
+    const fetchData = async () => {
+      try {
+        const [appointmentsRes, doctorsRes, patientsRes] = await Promise.all([
+          fetch("http://localhost:8000/appointments"),
+          fetch("http://localhost:8000/doctors"),
+          fetch("http://localhost:8000/patients"),
+        ]);
+
+        const [appointmentsData, doctorsData, patientsData] = await Promise.all(
+          [appointmentsRes.json(), doctorsRes.json(), patientsRes.json()]
+        );
+
+        setAppointments(appointmentsData);
+        setDoctors(doctorsData);
+        setPatients(patientsData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+
+    fetchData();
   }, []);
+
+  //getting the name of the doctor by id
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((d) => d.id === doctorId);
+    return doctor ? `Dr. ${doctor.name}` : "Unknown Doctor";
+  };
+
+  //getting the name of the patient by id
+  const getPatientName = (patientId) => {
+    const patient = patients.find((p) => p.id === patientId);
+    return patient ? patient.name : "Unknown Patient";
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -40,13 +70,13 @@ function Appointments() {
                   <span className="w-24 text-sm font-medium text-teal-700">
                     Doctor:
                   </span>
-                  <span>{app.doctor_id}</span>
+                  <span>{getDoctorName(app.doctor_id)}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="w-24 text-sm font-medium text-teal-700">
                     Patient:
                   </span>
-                  <span>{app.patient_id}</span>
+                  <span>{getPatientName(app.patient_id)}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="w-24 text-sm font-medium text-teal-700">

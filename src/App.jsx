@@ -14,7 +14,9 @@ function App() {
     <div className="min-h-screen bg-teal-50">
       <nav className="bg-teal-700 shadow-lg px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <span className="text-xl font-semibold text-white">MediCare</span>
+          <span className="text-3xl font-semibold text-white text-center">
+            MediCare
+          </span>
         </div>
 
         <div className="flex items-center space-x-6">
@@ -23,6 +25,12 @@ function App() {
             className="text-teal-100 hover:text-white transition-colors duration-200 font-medium px-3 py-1 rounded hover:bg-teal-600"
           >
             Dashboard
+          </Link>
+          <Link
+            to="/add-patient"
+            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors duration-200 font-medium shadow-md"
+          >
+            Add Patient
           </Link>
           <Link
             to="/book-appointment"
