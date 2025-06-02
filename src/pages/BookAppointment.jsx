@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const validationSchema = z.object({
+const schema = z.object({
   patient_id: z.coerce.number().min(1, "Select a patient"),
   doctor_id: z.coerce.number().min(1, "Select a doctor"),
   date_time: z.string().nonempty("Date and time required"),
@@ -13,33 +13,19 @@ const validationSchema = z.object({
 
 function BookAppointment() {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState({ patients: [], doctors: [] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [patientsRes, doctorsRes] = await Promise.all([
-          fetch("http://localhost:8000/patients"),
-          fetch("http://localhost:8000/doctors"),
-        ]);
-
-        const [patientsData, doctorsData] = await Promise.all([
-          patientsRes.json(),
-          doctorsRes.json(),
-        ]);
-
-        setPatients(patientsData);
-        setDoctors(doctorsData);
-      } catch (error) {
-        toast.error("Failed to load data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+    Promise.all([
+      fetch("http://localhost:8000/patients").then((res) => res.json()),
+      fetch("http://localhost:8000/doctors").then((res) => res.json()),
+    ])
+      .then(([patients, doctors]) => {
+        setData({ patients, doctors });
+        setLoading(false);
+      })
+      .catch(() => toast.error("Failed to load data"));
   }, []);
 
   const {
@@ -47,18 +33,18 @@ function BookAppointment() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     try {
       const response = await fetch("http://localhost:8000/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          patient_id: Number(data.patient_id),
-          doctor_id: Number(data.doctor_id),
-          date_time: new Date(data.date_time).toISOString(),
+          patient_id: Number(formData.patient_id),
+          doctor_id: Number(formData.doctor_id),
+          date_time: new Date(formData.date_time).toISOString(),
         }),
       });
 
@@ -71,7 +57,7 @@ function BookAppointment() {
     }
   };
 
-  if (isLoading)
+  if (loading)
     return <div className="text-center py-8 text-teal-600">Loading...</div>;
 
   return (
@@ -81,7 +67,6 @@ function BookAppointment() {
       </h2>
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        {/* Patient Selection */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Patient
@@ -94,7 +79,7 @@ function BookAppointment() {
             disabled={isSubmitting}
           >
             <option value="">Select Patient</option>
-            {patients.map((patient) => (
+            {data.patients.map((patient) => (
               <option key={patient.id} value={patient.id}>
                 {patient.name}
               </option>
@@ -107,7 +92,6 @@ function BookAppointment() {
           )}
         </div>
 
-        {/* Doctor Selection */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Doctor
@@ -120,7 +104,7 @@ function BookAppointment() {
             disabled={isSubmitting}
           >
             <option value="">Select Doctor</option>
-            {doctors.map((doctor) => (
+            {data.doctors.map((doctor) => (
               <option key={doctor.id} value={doctor.id}>
                 Dr. {doctor.name}
               </option>
@@ -133,7 +117,6 @@ function BookAppointment() {
           )}
         </div>
 
-        {/* Date and Time */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Date & Time
