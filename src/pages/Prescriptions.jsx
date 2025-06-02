@@ -44,18 +44,18 @@ function Prescriptions() {
             </h3>
             <div className="text-gray-700 space-y-1 text-sm">
               <p>
-                <span className="font-medium">Dosage:</span> {rx.dosage}
+                <div className="font-medium">Dosage:</div> {rx.dosage}
               </p>
               <p>
-                <span className="font-medium">Date Prescribed:</span>{" "}
+                <div className="font-medium">Date Prescribed:</div>{" "}
                 {new Date(rx.date_prescribed).toLocaleDateString()}
               </p>
               <p>
-                <span className="font-medium">Doctor:</span>{" "}
+                <div className="font-medium">Doctor:</div>{" "}
                 {getName(rx.doctor_id, data.doctors, "Dr. ")}
               </p>
               <p>
-                <span className="font-medium">Patient:</span>{" "}
+                <div className="font-medium">Patient:</div>{" "}
                 {getName(rx.patient_id, data.patients)}
               </p>
             </div>

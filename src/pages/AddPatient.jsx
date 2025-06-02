@@ -37,27 +37,27 @@ export default function AddPatient() {
     },
   });
 
-  const onSubmit = async (values) => {
-    try {
-      const res = await fetch("http://localhost:8000/patients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+  const onSubmit = (values) => {
+    fetch("http://localhost:8000/patients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        reset();
+        toast.success(data.message);
+        navigate("/patients");
+      })
+      .catch((error) => {
+        toast.error("Failed to add patient");
       });
-      if (!res.ok) throw new Error(await res.text());
-      toast.success("Patient added!");
-      reset();
-      navigate("/patients");
-    } catch (error) {
-      toast.error(error.message);
-    }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8 border border-teal-100">
       <h2 className="text-xl font-semibold mb-4 text-teal-800">Add Patient</h2>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        {/* Name (required) */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Full Name <span className="text-red-500">*</span>
@@ -65,16 +65,17 @@ export default function AddPatient() {
           <input
             type="text"
             {...register("name")}
-            className={`w-full p-2.5 rounded-lg border ${
-              errors.name ? "border-red-400" : "border-teal-200"
-            } focus:ring-2 focus:ring-teal-300 focus:border-teal-400`}
+            className={
+              errors.name
+                ? "w-full p-2.5 rounded-lg border border-red-400 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+                : "w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+            }
           />
-          {errors.name && (
+          {errors.name ? (
             <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
-          )}
+          ) : null}
         </div>
 
-        {/* Gender */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Gender
@@ -87,7 +88,6 @@ export default function AddPatient() {
           />
         </div>
 
-        {/* Date of Birth */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Date of Birth
@@ -100,7 +100,6 @@ export default function AddPatient() {
           />
         </div>
 
-        {/* Phone Number */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Phone Number
@@ -108,19 +107,20 @@ export default function AddPatient() {
           <input
             type="tel"
             {...register("phone_number")}
-            className={`w-full p-2.5 rounded-lg border ${
-              errors.phone_number ? "border-red-400" : "border-teal-200"
-            } focus:ring-2 focus:ring-teal-300 focus:border-teal-400`}
+            className={
+              errors.phone_number
+                ? "w-full p-2.5 rounded-lg border border-red-400 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+                : "w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
+            }
             placeholder="10-digit number"
           />
-          {errors.phone_number && (
+          {errors.phone_number ? (
             <p className="mt-1 text-sm text-red-500">
               {errors.phone_number.message}
             </p>
-          )}
+          ) : null}
         </div>
 
-        {/* Emergency Contact */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Emergency Contact
@@ -132,7 +132,6 @@ export default function AddPatient() {
           />
         </div>
 
-        {/* Emergency Phone */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Emergency Phone
@@ -144,7 +143,6 @@ export default function AddPatient() {
           />
         </div>
 
-        {/* Blood Type */}
         <div>
           <label className="block text-sm font-medium text-teal-700 mb-1">
             Blood Type
@@ -160,9 +158,11 @@ export default function AddPatient() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium ${
-            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-          }`}
+          className={
+            isSubmitting
+              ? "w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg font-medium opacity-70 cursor-not-allowed"
+              : "w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+          }
         >
           {isSubmitting ? "Adding..." : "Add Patient"}
         </button>
