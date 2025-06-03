@@ -84,7 +84,7 @@ export default function AddPatient() {
             type="text"
             {...register("gender")}
             className="w-full p-2.5 rounded-lg border border-teal-200 focus:ring-2 focus:ring-teal-300 focus:border-teal-400"
-            placeholder="Male/Female/Other"
+            placeholder="Male/Female"
           />
         </div>
 

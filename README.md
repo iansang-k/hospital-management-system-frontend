@@ -23,5 +23,5 @@ The app runs on http://localhost:5173 and connects to the FastAPI backend
 
 ## Presentation
 
-The link to the recording of my frontend presentation is here:
+The link to the recording of my frontend presentation is here: https://www.loom.com/share/fa0c00f764704606b094c420f22ed43d?sid=0fd43f95-c329-432d-891a-2670b616c6c1
 
