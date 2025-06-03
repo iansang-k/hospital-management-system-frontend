@@ -1,12 +1,27 @@
-# React + Vite
+# MediCare Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React frontend for the hospital management system with a clean, modern interface for managing patients, doctors, appointments and prescriptions.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Install dependencies by running: 
+    npm install
 
-## Expanding the ESLint configuration
+Start the development server:
+    npm run dev
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Features
+
+- Patient management 
+- Doctor records
+- Appointement booking 
+- Prescription management
+- Responsive design with Tailwind CSS
+- Toast notifications
+
+The app runs on http://localhost:5173 and connects to the FastAPI backend
+
+## Presentation
+
+The link to the recording of my frontend presentation is here:
+
