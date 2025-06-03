@@ -159,12 +159,10 @@ export default function AddPatient() {
           type="submit"
           disabled={isSubmitting}
           className={
-            isSubmitting
-              ? "w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg font-medium opacity-70 cursor-not-allowed"
-              : "w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+            "w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
           }
         >
-          {isSubmitting ? "Adding..." : "Add Patient"}
+          Add Patient
         </button>
       </form>
     </div>

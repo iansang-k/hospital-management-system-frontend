@@ -141,12 +141,10 @@ function BookAppointment() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors ${
-            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+          className={`w-full py-2.5 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors 
           }`}
         >
-          {isSubmitting ? "Booking..." : "Book Appointment"}
+          Book Appointment
         </button>
       </form>
     </div>
